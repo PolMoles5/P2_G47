@@ -29,12 +29,10 @@ unsigned int split(const std::string &txt, std::vector<std::string> &strs, std::
 	return strs.size();
 }
 
-
-
 //Creamos una lista global
 std::vector<std::string> *lista = new std::vector<std::string>;
-
 std::unordered_map<std::string, std::string> map;
+int puntos = 0;
 
 //Función que imprime las instrucciones del programa
 void showHelp() {
@@ -53,46 +51,52 @@ void showHelp() {
 
 //Función que imprime la lista de elementos
 void showList() {
+	std::cout << "\n";
+	std::cout << "Your current score: " << puntos << "\n" << std:: endl;
 	for (int i = 0; i < lista->size(); i++) {
 		std::cout << i << ":" << (*(lista))[i] << std::endl;
 	}
+	std::cout << "\n";
+}
+
+void addBasics() {
+	lista->push_back("Air");
+	lista->push_back("Earth");
+	lista->push_back("Fire");
+	lista->push_back("Water");
 }
 
 
 void main() {
+
+
+	//Cargamos el documento con las combinaciones posibles 
 	std::ifstream infile("elements.dat");
 	std::string line;
+
+	//Este bucle leerá todas las líneas de "elements.dat"
 	while (std::getline(infile, line))
 	{
+		//Creamos un vector de string en el que almacenaremos los resultados de las combinaciones
 		std::vector<std::string> parts;
+		//Separamos cada línea del documento en llegar al "=" 
 		split(line, parts, " = ");
-std::string resultat = parts.at(0);
-std::string resultat1 = parts.at(1);
 
-
+		//Este segundo vector de string almacenará ambos elementos a combinar
 		std::vector<std::string> parts2;
+		//Esto lo hará separando la segunda parte (a partir del " + ") del "split" que hicimos para separar el resultado de los elementos
 		split(parts.at(1), parts2, " + ");
 
-		
 		map[parts2.at(0) + " + " + parts2.at(1)] = parts.at(0);
 	}
-	std::vector<std::string> ans;
-	split("combine 3 1", ans, " ");
-	std::cout << ans.at(0) << "|" << ans.at(1) << "|" << ans.at(2) << std::endl;
+	
 
-	std::vector<std::string> ans2;
-	split("Lawn Mower = Scissors + Combustion Engine", ans2, " = ");
-	std::cout << ans2.at(0) << "|" << ans2.at(1) << std::endl;
 
 	//Datos introducidos por el usuario
 	std::string userCommand;
 
 	//Elementos iniciales en la lista
-	lista->push_back("Air");
-	lista->push_back("Earth");
-	lista->push_back("Fire");
-	lista->push_back("Water");
-
+	addBasics();
 	showHelp();
 	showList();
 
@@ -100,21 +104,21 @@ std::string resultat1 = parts.at(1);
 		std::getline(std::cin, userCommand);
 		std::vector<std::string>  arguments;
 		split(userCommand, arguments, " ");
-
+		system("cls");
 
 		//Si el usuario introduce HELP
-		if (arguments.at(0).compare("help") == 0) {
+	    if (arguments.at(0).compare("help") == 0) {
 			showHelp();
 		}
 
 		//Si el usuario introduce DELETE X
-		if (arguments.at(0).compare("delete") == 0) {
+		else if (arguments.at(0).compare("delete") == 0) {
 			std::cout << "borrando" << arguments.at(1) <<"\n" <<std::endl;
 			lista->erase(lista->begin() + std::stoi(arguments.at(1)));
 		}
 
 		//Si el usuario introduce INFO X
-		if (arguments.at(0).compare("info") == 0) {
+		else if (arguments.at(0).compare("info") == 0) {
 			int posicion = /*std::*/stoi(arguments.at(1));
 			std::cout << "Buscando info de " << lista->at(posicion) << "\n" << std::endl;
 		
@@ -124,24 +128,20 @@ std::string resultat1 = parts.at(1);
 			ShellExecute(NULL, "open", link.c_str() , NULL, NULL, SW_SHOWNORMAL);
 		}
 
-
-	
 		//Si el usuario introduce ADD X
-		if (arguments.at(0).compare("add") == 0 && !arguments.at(1).compare("basics") == 0) {
+		else if (arguments.at(0).compare("add") == 0 && !arguments.at(1).compare("basics") == 0) {
 			int posicion = stoi(arguments.at(1));
 			std::cout <<"\n" << std::endl;
 			lista->push_back((lista->at(posicion)));
 		}
 
 		//Si el usuario introduce ADD BASICS
-		if (arguments.at(0).compare("add") == 0 && arguments.at(1).compare("basics") == 0) {
-
-			lista->push_back("Air");
-			lista->push_back("Earth");
-			lista->push_back("Fire");
-			lista->push_back("Water");
+		else if (arguments.at(0).compare("add") == 0 && arguments.at(1).compare("basics") == 0) {
+			addBasics();
 		}
-		if (arguments.at(0) =="clean") {
+
+		//Si el usuario introduce CLEAN
+		else if (arguments.at(0) =="clean") {
 			std::vector<std::string> *newLista = new std::vector<std::string>;
 			for (int i = 0; i < lista->size();i++) {
 				std::string actual = lista->at(i);
@@ -156,28 +156,51 @@ std::string resultat1 = parts.at(1);
 			lista = newLista;
 		}
 
-		if (arguments.at(0).compare("sort") == 0) {
+		//Si el usuario introduce SORT
+		else if (arguments.at(0).compare("sort") == 0) {
 			std::sort(lista->begin(), lista->end());
 		}
 
-		if (arguments.at(0)=="combine" ) {
+		//Si el usuario introduce COMBINE X Y
+		else if (arguments.at(0)=="combine" ) {
 			std::string elemento1 = lista->at(stoi(arguments.at(1)));
 			std::string elemento2 = lista->at(stoi(arguments.at(2)));
-			
-			std::cout << "Combinando " << elemento1 << " con " << elemento2 << std::endl;
-
 			std::string key = elemento1 + " + " + elemento2;
-			
-			lista->push_back(map[key]);
-			lista->erase(lista->begin() + std::stoi(arguments.at(1)));
-			lista->erase(lista->begin() + std::stoi(arguments.at(2)));
+
+			//Para que no se pueda combinar elementos consigo misos que ocuppen el mismo sitio en la lista
+			if (elemento1 != elemento2) {
+				//Si la combinación introducida es válida:
+				if (map.count(key)) {
+					lista->push_back(map[key]);
+					lista->erase(lista->begin() + std::stoi(arguments.at(1)));
+					lista->erase(lista->begin() + std::stoi(arguments.at(2)));
+				}
+
+				//En el caso de que no lo sea:
+				if (!map.count(key)) {
+					//Se prueba cambiando el orden de lo elementos
+					std::string key = elemento2 + " + " + elemento1;
+					if (map.count(key)) {
+						lista->push_back(map[key]);
+						lista->erase(lista->begin() + std::stoi(arguments.at(1)));
+						lista->erase(lista->begin() + std::stoi(arguments.at(2)));
+					}
+					if (!map.count(key)) {
+						std::cout << "This combination is not possible. Try again" << std::endl;
+					}
+				}
+			}
+			else {
+				std::cout << "Cannot combine the same element" <<"\n"<< std::endl;
+			}
 		}
 
-
-
+		//Si el comando introducido no existe
+		else {
+			std::cout << "This function is not available. Type 'help' for more info...";
+		}
 		showList();
 	}
-
-
+	
 
 }
