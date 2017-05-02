@@ -1,4 +1,4 @@
-//Codigo Repaso 1
+//Código de Alchemy : Salvador Cerdà Holmager / Pol Moles Gil
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -9,7 +9,7 @@
 #include <fstream>
 #include <sstream>
 
-
+//Con esta función podemos especificar que carácteres queremos que realizen un salto para separar los elementos introducidos por el usuario
 unsigned int split(const std::string &txt, std::vector<std::string> &strs, std::string ch)
 {
 	unsigned int pos = txt.find(ch);
@@ -29,9 +29,11 @@ unsigned int split(const std::string &txt, std::vector<std::string> &strs, std::
 	return strs.size();
 }
 
-
+//Creo un vector para la lista que se mostará en pantalla
 std::vector<std::string> *lista = new std::vector<std::string>;
+//Creamos un unordered_map para guardar las diferentes combinaciones y sus resultados
 std::unordered_map<std::string, std::string> map;
+//Creamos un vector para guardar las nuevas combinaciones realizadas por el jugador 
 std::vector<std::string> *combin = new std::vector<std::string>;
 int puntos = 0;
 
@@ -49,7 +51,6 @@ void showHelp() {
 	std::cout << "-Enter the word 'clean' to delete all the instances of of repeated elements." << std::endl;
 	std::cout << "-Enter the word 'help' to show this tutorial." << std::endl << "\n";
 }
-
 //Función que imprime la lista de elementos
 void showList() {
 	
@@ -59,7 +60,7 @@ void showList() {
 	}
 	
 }
-
+//Función que añade los elementos básicos al final de la lista
 void addBasics() {
 	lista->push_back("Air");
 	lista->push_back("Earth");
@@ -73,8 +74,13 @@ void main() {
 
 	//Cargamos el documento con las combinaciones posibles 
 	std::ifstream infile("elements.dat");
-	std::string line;
+	//Si el archivo elements.dat no se carga correctamente, se notifica al usuario y se pausa el programa
+	if (!infile.is_open()){	
+		std::cout << "El archivo elements.dat no se ha cargado correctamente " << std::endl;
+		system("pause");
+	}
 
+	std::string line;
 	//Este bucle leerá todas las líneas de "elements.dat"
 	while (std::getline(infile, line))
 	{
@@ -91,8 +97,6 @@ void main() {
 		map[parts2.at(0) + " + " + parts2.at(1)] = parts.at(0);
 	}
 	
-
-
 	//Datos introducidos por el usuario
 	std::string userCommand;
 
@@ -101,6 +105,7 @@ void main() {
 	showHelp();
 	showList();
 
+	//Bucle principal
 	while (true) {
 		std::getline(std::cin, userCommand);
 		std::cin.clear();
@@ -212,6 +217,4 @@ void main() {
 		}
 		showList();
 	}
-	
-
 }
